@@ -15,11 +15,18 @@ namespace User_Manager
         private List<Perfil> perfiles = new List<Perfil>();
         private List<Nacionalidad> naciones = new List<Nacionalidad>();
 
+        //public List<Genero> Generos
+        //{
+        //    get { return generos; }
+        //    set { generos = value; }
+        //}
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.llenarCombobox();
+
             if (!IsPostBack)
             {
-
                 UsuarioBE entity = new UsuarioBE();
                 entity.codigo = "";
                 entity.apellido = "";
@@ -27,32 +34,26 @@ namespace User_Manager
                 entity.idNacionalidad = 0;
                 entity.idPerfil = 0;
                 this.ListarUsuario(entity);
-                this.llenarCombobox();
+
             }
         }
 
         public void llenarCombobox()
         {
             UsuarioBL usuarioBL = new UsuarioBL();
+
             generos = usuarioBL.ListarGenero();
-            List<string> gens = generos.Select(x => x.descripcion).ToList();
-            foreach(string g in gens)
-            {
-
-            System.Diagnostics.Debug.WriteLine(g);
-            }
-
+            generos.Insert(0, new Genero { descripcion = "SELECCIONAR" });
             ddlGenero.DataSource = generos.Select(x => x.descripcion).ToList();
             perfiles = usuarioBL.ListarPerfiles();
-            ddlPerfil.DataSource = perfiles.Select(x => x.descripcion);
+            perfiles.Insert(0, new Perfil { descripcion = "SELECCIONAR" });
+            ddlPerfil.DataSource = perfiles.Select(x => x.descripcion).ToList();
             naciones = usuarioBL.ListarNacionalidades();
-            ddlNacionalidad.DataSource = naciones.Select(x => x.descripcion);
+            naciones.Insert(0, new Nacionalidad { descripcion = "SELECCIONAR" });
+            ddlNacionalidad.DataSource = naciones.Select(x => x.descripcion).ToList();
 
-            ddlGenero.DataSource = generos;
             ddlGenero.DataBind();
-            ddlNacionalidad.DataSource = naciones;
             ddlNacionalidad.DataBind();
-            ddlPerfil.DataSource = perfiles;
             ddlPerfil.DataBind();
         }
 
@@ -61,8 +62,6 @@ namespace User_Manager
             //this.hfDelete.Value = "0";
 
             UsuarioBL usuarioBL = new UsuarioBL();
-            System.Diagnostics.Debug.WriteLine("_______________________________________________________________");
-            System.Diagnostics.Debug.WriteLine(entity.codigo);
             List<UsuarioBE> list = usuarioBL.Listar(entity);
 
             this.gvUsuario.DataSource = list;
@@ -76,9 +75,15 @@ namespace User_Manager
             UsuarioBE entity = new UsuarioBE();
             entity.codigo = txtCodigo.Text;
             entity.apellido = txtApellido.Text;
-            entity.idGenero = 1;
-            entity.idNacionalidad = 1;
-            entity.idPerfil = 3;
+            string genero = this.ddlGenero.SelectedValue;
+
+            entity.idGenero = generos.Find(x => x.descripcion == genero).id;
+            System.Diagnostics.Debug.WriteLine("idGenero: "+entity.idGenero);
+
+            string nacionalidad = this.ddlNacionalidad.SelectedValue;
+            entity.idNacionalidad = naciones.Find(x => x.descripcion == nacionalidad).id;
+            string perfil = this.ddlPerfil.SelectedValue;
+            entity.idPerfil = perfiles.Find(x => x.descripcion == perfil).id;
             this.ListarUsuario(entity);
         }
 

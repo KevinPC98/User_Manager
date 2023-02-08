@@ -19,8 +19,6 @@ namespace USER.BL
 
         public List<UsuarioBE> Listar(UsuarioBE entity)
         {
-            System.Diagnostics.Debug.WriteLine(entity.codigo);
-
             return _usuarioDAC.Listar(entity);
         }
 

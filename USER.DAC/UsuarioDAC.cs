@@ -51,8 +51,7 @@ namespace USER.DAC
                         ).ToList();
 
                 }
-                System.Diagnostics.Debug.WriteLine(entity.codigo);
-                System.Diagnostics.Debug.WriteLine(list.Count);
+
                 return list;
 
 
